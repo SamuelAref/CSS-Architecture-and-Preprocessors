@@ -1,0 +1,941 @@
+Tutorial #1 : What is SASS 
+
+    - is CSS on steroids, CSS with superpowers 
+    - does this by bringing typical programmming 
+      constructs like (functions, variables) to 
+      make css more flexible
+
+    - Prerequisites 
+        - CSS basics
+        - basics of any programming language
+        - node js 
+        - gulp
+
+Tutorial #2 : Compiling SASS
+
+    - The easiest way to compile a SASS file to css is to 
+      download an extension on vscode (live sass compiler), 
+      after that a little button will pop up that says watch 
+      Sass at the bottom of vscode .
+
+    - Another way is to use task runner (gulp), but gives more functionality it is better
+      npm install gulp gulp-sass sass --save-dev  //add -g after sass to install globally 
+
+        this command will install 
+
+          - gulp - task runner (runs compilation)
+          - gulp-sass - runs sass compilation
+          - sass - what gulp will use to compile 
+      
+    - Then we create a gulp file 
+
+          - filename must be gulpfile.js 
+
+            then in the gulpfile.js we add  2 functions and export them that will compile and watch for any changes
+
+              const {src, dest, watch, series} = require('gulp')
+              const sass = require('gulp-sass')(require('sass'))
+
+              //compiles scss to css
+              function buildStyles() {
+
+                  return src('index.scss') 
+                  .pipe(sass())
+                  .pipe(dest('css'))
+              }
+
+              //watches any changes and converts
+              function watchTask() {
+
+                  watch(['index.scss'], buildStyles)
+              }
+
+              exports.default = series(buildStyles, watchTask);
+
+    - Then we run the command 'gulp' 
+
+Tutorial #3 : Variables 
+
+    Variables can be assigned to different values like colors, dimensions and length 
+
+    //variables 
+
+      //colors 
+      $primary: #326DEE;
+      $secondary: #1AC888;
+      $error: #D32752;
+      $info: #f6C31C;
+
+      //spacing
+      $base-padding:0.75rem;
+      $base-margin:0.75rem;
+
+      //borders
+      $base-border-thickness:1px;
+      $base-border-radius:20px;
+
+      h1 {
+
+          color : $primary;
+          margin-bottom: $base-margin;
+      }
+
+      a {
+
+          color : $secondary;
+      }
+
+      button {
+
+          color : white;
+          border : 0;
+          background: $primary;
+          border-radius: $base-border-radius;
+          padding: $base-padding;
+      }
+
+      .error {
+
+          color: $error;
+          border-color: $error;
+          border-style: solid;
+          margin: $base-margin;
+          padding: $base-padding;
+          border-radius: $base-border-radius;
+          border-width: $base-border-thickness;
+      }
+
+      .notification{
+
+          color: $secondary;
+          border-color:$secondary;
+          border-style: solid;
+          margin: $base-margin;  
+          padding: $base-padding;
+          border-radius: $base-border-radius;
+          border-width: $base-border-thickness;
+      }
+
+Tutorial #4 : Partials & import
+
+    Partials - are a way to split our code to different files 
+             - example - buttons, images....
+             - we created a new file and named it _variables.scss - the underscore means that gulp should ignore this scss file and that it's just a helper file 
+             - Note: we can replace the specific file that we want to be watched with *, so that the gulp file can watch all scss files that don't start with underscore 
+
+            _variables 
+
+              //variables 
+
+              //colors 
+              $primary: #326DEE;
+              $secondary: #1AC888;
+              $error: #D32752;
+              $info: #f6C31C;
+
+              //spacing
+              $base-padding:0.75rem;
+              $base-margin:0.75rem;
+
+              //borders
+              $base-border-thickness:1px;
+              $base-border-radius:20px;
+            
+            index.scss // here we import the file 
+
+              @import('./variables); // no need to add the file type 
+
+Tutorial #5 : Project structure
+
+    - so we created a file that housed the scss files 
+    - we adjusted the gulpfile.js to look for that new folder and it's directories (folder/**/*)
+    - we imported them to the main file which is index.scss 
+    - remember to watchout for heirarchy of imports so that you may obey the dependence of one file over another 
+    - in the base file that you import everything it's better if the heirarchy is the following 
+          
+            // variables & functions
+
+            // base & layout
+
+            // colors
+
+            // components ( button, card, navbar)
+
+            // utilities (margin, padding, opacity)
+
+Tutorial #6 : Nested Rules 
+
+    - in scss, we can nest child elements of a parent to assign 
+      properties to them like: 
+
+           .card-body {
+
+              font-size :$base-font-size;
+
+              a {
+
+                      text-decoration: underline;
+              }
+            }
+
+Tutorial #7 : Using Math 
+
+    - we can change the values of the variables directly or indirectly using operations
+
+      directly 
+
+        $base-font-size: 1rem;
+        $font-size-sm: $base-font-size * 0.75;
+        $font-size-lg: $base-font-size * 1.5;
+        $font-size-xl: $base-font-size * 2;
+        $font-size-xxl: $base-font-size * 3;
+
+      indirectly 
+
+        box-shadow: $base-box-shadow * 2;
+
+        //to divide we first import math 
+          @use 'sass:math';
+          
+          border-radius: math.div($base-border-radius, 4);
+
+      debugging // we can output anything we want to the terminal if we want to check a certain value
+
+        @debug "hello";
+        @debug math.div(10,3);
+        @debug math.floor(2.6);
+        @debug math.max(2, 3,5);
+
+Tutorial #8 : Maps
+
+    - is a way to collect different variables 
+
+        $colors: (
+
+          "primary" : $primary,
+          "secondary": $secondary,
+          "error": $error,
+          "info":$info,
+          "blue": #1919e6,
+          "red":#e61919,
+          "yellow":#e6e619,
+          "green":#19e635,
+          "orange":#ffa600,
+          "purple":#9900ff,
+          "gray":#808080,
+          "black":black,
+          "white":white,
+        );
+
+        .test-btn {
+
+            background-color: map-get($colors, "purple");
+        }
+
+        @debug map-get($colors, "primary");
+        @debug map-has-key($colors, "green");
+        @debug map-remove($colors, "primary");
+        @debug map-merge($colors, ("pink": #ffc0cb));
+
+Tutorial #9 : Loops
+
+    This refers to looping through an entity (mapped object in our case)
+
+     //each loop , in key value pairs 
+     // in loops, to use a variable we use # first 
+     @each $key, $val in $colors {
+
+        .text-#{$key} {
+
+            color:$val;
+        }
+
+        .bg-#{$key}{
+
+            background-color: $val;
+        }
+
+        //for loop
+
+        // light variations 
+
+        @for $i from 1 through 9 {
+
+            .text-#{$key}-light-#{$i}{
+
+                color: mix(white, $val, $i * 10);
+            }
+
+            .bg-#{$key}-light-#{$i}{
+
+                background-color: mix(white, $val, $i * 10);
+            }
+        }
+
+        
+        // dark variations 
+
+        @for $i from 1 through 9 { 
+
+            .text-#{$key}-dark-#{$i}{
+
+                color: mix(black, $val, $i * 10);
+            }
+
+            .bg-#{$key}-dark-#{$i}{
+
+                background-color: mix(black, $val, $i * 10);
+            }
+        }
+
+    }
+
+Tutorial #10 : Conditionals
+
+  just like other languages we use if else statements as such 
+
+       @if (10 < 5) {
+
+          @debug hi;
+          
+        }
+
+        @else {
+
+        }
+
+      in our file we don't need to create shades of white or black because it is unneccessary
+
+        @if ($val != black and $val != white){
+
+            // light variations 
+            @for $i from 1 through 9 {
+
+                .text-#{$key}-light-#{$i}{
+
+                    color: mix(white, $val, $i * 10);
+                }
+
+                .bg-#{$key}-light-#{$i}{
+
+                    background-color: mix(white, $val, $i * 10);
+                }
+            }
+
+            // dark variations 
+            @for $i from 1 through 9 {
+
+                .text-#{$key}-dark-#{$i}{
+
+                    color: mix(black, $val, $i * 10);
+                }
+
+                .bg-#{$key}-dark-#{$i}{
+
+                    background-color: mix(black, $val, $i * 10);
+                }
+            }
+
+        }
+
+Tutorial #11 : Parent Selectors 
+
+    we can use & to choose pseudo selector
+
+     .text-hover-#{$key} {
+
+        &:hover {
+
+            color: $val;
+
+        }
+
+        &:last-child {
+
+
+        }
+    }
+
+Tutorial #12 : Mixins
+
+    - way to group together bunch of properties that can be reusable later 
+
+     @mixin btn($bg-color : #e2e2e2){ //default value given 
+
+          text-decoration: none;
+          cursor: pointer;
+          display: inline-block;
+          border: 0;
+          padding: $base-padding $base-padding * 2;
+          border-radius: $base-border-radius;
+          background-color: $bg-color;
+
+      }
+
+      // to use the mixin 
+
+        @include btn(value); // for parameter passing 
+        @include btn(); // for default parameter call 
+
+Tutorial #13 : Functions 
+
+    - just like other programming languages, function accepts parameters, does something with them and returns a value 
+
+        @function light-comp($color) {
+
+            $complement : complement($color);
+            $light-complement : lighten($complement, 30%);
+
+            @return $light-complement;
+        }
+
+Tutorial #14 : Making Utitlity Classes 
+
+    In making the utitity classes, we have used map and loops to cycle through
+     different properties with key value pairs to create each margin functionality
+
+     Remember that the property name must be the same property name as css properties 
+
+     _utitlities.scss file 
+
+        @use 'sass:math';
+
+            $utilities: (
+            "padding": (
+                "prefix": "p",
+                "values": (
+                "0": 0,
+                "1": $base-padding,
+                "2": $base-padding * 2,
+                "3": $base-padding * 4,
+                "4": $base-padding * 6,
+                "5": $base-padding * 8
+                ),
+            ),
+            "padding-left": (
+                "prefix": "pl",
+                "values": (
+                "0": 0,
+                "1": $base-padding,
+                "2": $base-padding * 2,
+                "3": $base-padding * 4,
+                "4": $base-padding * 6,
+                "5": $base-padding * 8
+                ),
+            ),
+            "padding-right": (
+                "prefix": "pr",
+                "values": (
+                "0": 0,
+                "1": $base-padding,
+                "2": $base-padding * 2,
+                "3": $base-padding * 4,
+                "4": $base-padding * 6,
+                "5": $base-padding * 8
+                ),
+            ),
+            "padding-top": (
+                "prefix": "pt",
+                "values": (
+                "0": 0,
+                "1": $base-padding,
+                "2": $base-padding * 2,
+                "3": $base-padding * 4,
+                "4": $base-padding * 6,
+                "5": $base-padding * 8
+                ),
+            ),
+            "padding-bottom": (
+                "prefix": "pb",
+                "values": (
+                "0": 0,
+                "1": $base-padding,
+                "2": $base-padding * 2,
+                "3": $base-padding * 4,
+                "4": $base-padding * 6,
+                "5": $base-padding * 8
+                ),
+            ),
+            "margin": (
+                "prefix": "m",
+                "values": (
+                "0": 0,
+                "1": $base-margin,
+                "2": $base-margin * 2,
+                "3": $base-margin * 4,
+                "4": $base-margin * 6,
+                "5": $base-margin * 8
+                ),
+            ),
+            "margin-left": (
+                "prefix": "ml",
+                "values": (
+                "0": 0,
+                "1": $base-margin,
+                "2": $base-margin * 2,
+                "3": $base-margin * 4,
+                "4": $base-margin * 6,
+                "5": $base-margin * 8
+                ),
+            ),
+            "margin-right": (
+                "prefix": "mr",
+                "values": (
+                "0": 0,
+                "1": $base-margin,
+                "2": $base-margin * 2,
+                "3": $base-margin * 4,
+                "4": $base-margin * 6,
+                "5": $base-margin * 8
+                ),
+            ),
+            "margin-top": (
+                "prefix": "mt",
+                "values": (
+                "0": 0,
+                "1": $base-margin,
+                "2": $base-margin * 2,
+                "3": $base-margin * 4,
+                "4": $base-margin * 6,
+                "5": $base-margin * 8
+                ),
+            ),
+            "margin-bottom": (
+                "prefix": "mb",
+                "values": (
+                "0": 0,
+                "1": $base-margin,
+                "2": $base-margin * 2,
+                "3": $base-margin * 4,
+                "4": $base-margin * 6,
+                "5": $base-margin * 8
+                ),
+            ),
+
+            "opacity": (
+                "prefix": "o",
+                "values": (
+                "10": 0.1,
+                "20": 0.2,
+                "30": 0.3,
+                "40": 0.4,
+                "50": 0.5,
+                "60": 0.6,
+                "70": 0.7,
+                "80": 0.8,
+                "90": 0.9,
+                "100": 1,
+                ),
+            ),
+            "border-radius": (
+                "prefix": "br",
+                "values": (
+                "default": $base-border-radius,
+                "none": 0,
+                "xs": math.div($base-border-radius, 4),
+                "sm": math.div($base-border-radius, 2),
+                "lg": $base-border-radius * 2,
+                "full": 50%,
+                )
+            ),
+            "display": (
+                "prefix": "display",
+                "values": (
+                "n": none,
+                "b": block,
+                "f": flex,
+                "i": inline,
+                "i-b": inline-block
+                )
+            ),
+            "font-size": (
+                "prefix": "font",
+                "values": (
+                "sm": $font-size-sm,
+                "md": $base-font-size,
+                "lg": $font-size-lg,
+                "xl": $font-size-xl,
+                "xxl": $font-size-xxl
+                )
+            )
+            );
+
+
+            //generate utility class 
+            @each $property, $map in $utilities {
+
+                $prefix: map-get($map, "prefix");
+                $values: map-get($map, "values");
+
+                    @each $k , $v in $values {
+
+                        @if($k == "default"){ // this is if we have a default case 
+
+                            .#{$prefix} {
+
+                                #{$property}: $v;
+                            }
+                        }
+
+                        @else {
+
+                            .#{$prefix}-#{$k} {
+
+                                    #{$property}: $v;
+
+                            }
+                        }
+                    }
+
+            };
+
+Tutorial #15 : Media Queries 
+
+    in order to make a page responsive by using media queries, 
+     we are using map and mixins to adopt to the property 
+
+     _breakpoints.scss file 
+
+                    $breakpoints : (
+
+                        "xs": 0,
+                        "sm": 480px,
+                        "md": 720px,
+                        "lg": 960px,
+                        "xl": 1200px 
+
+                    );
+
+
+            @mixin xs {
+
+                @media (min-width : map-get($breakpoints, "xs")){
+
+                    @content
+                }
+            };
+
+            @mixin sm {
+
+                @media (min-width : map-get($breakpoints, "sm")){
+
+                    @content
+                }
+            };
+
+            @mixin md {
+
+                @media (min-width : map-get($breakpoints, "md")){
+
+                    @content
+                }
+            };
+
+            @mixin lg {
+
+                @media (min-width : map-get($breakpoints, "lg")){
+
+                    @content
+                }
+            };
+
+            @mixin xl {
+
+                @media (min-width : map-get($breakpoints, "xl")){
+
+                    @content
+                }
+            };
+
+            @mixin breakpoint ($bp: 0) {
+
+                @media ( min-width: $bp) {
+
+                    @content;
+                }
+
+            }
+
+            .responsive-test {
+
+                @include xs {
+
+                    color : red;
+                }
+
+                @include sm {
+
+                    color : blue;
+                }
+
+                @include md {
+
+                    color : green;
+                }
+
+                @include lg {
+
+                    color : purple;
+                }
+
+                @include xl {
+
+                    color : orange;
+                }
+
+                @include breakpoint (1400px) {
+
+                    color : pink;
+                }
+            };
+
+Tutorial #16 : Making a Grid System (part 1)
+
+    The grid system refers to a predefined rules of rows and width that will
+     make the page content responsive and fold to the next line 
+
+        _grid.scss
+
+            @use "sass:math";
+
+            $grid-columns : 12;
+
+            // base layout classes 
+
+            .container {
+
+                width : 100%;
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 20px;
+                box-sizing: border-box;
+            }
+
+            .row {
+
+                display : flex;
+                flex-flow : row wrap;
+            }
+
+            // col classes 
+
+            @include xs {
+
+                @for $i from 1 through $grid-columns{
+
+                    .col-#{$i}-xs {
+
+                        box-sizing: border-box;
+                        flex-grow: 0;
+                        width: math.div($i * 100%, $grid-columns);
+                    }
+                }
+            
+            }
+
+            @include sm {
+
+                @for $i from 1 through $grid-columns{
+
+                    .col-#{$i}-sm {
+
+                        box-sizing: border-box;
+                        flex-grow: 0;
+                        width: math.div($i * 100%, $grid-columns);
+                    }
+                }
+            
+            }
+
+            @include md {
+
+                @for $i from 1 through $grid-columns{
+
+                    .col-#{$i}-md {
+
+                        box-sizing: border-box;
+                        flex-grow: 0;
+                        width: math.div($i * 100%, $grid-columns);
+                    }
+                }
+            
+            }
+
+            @include lg {
+
+                @for $i from 1 through $grid-columns{
+
+                    .col-#{$i}-lg {
+
+                        box-sizing: border-box;
+                        flex-grow: 0;
+                        width: math.div($i * 100%, $grid-columns);
+                    }
+                }
+            
+            }
+
+            @include xl {
+
+                @for $i from 1 through $grid-columns{
+
+                    .col-#{$i}-xl {
+
+                        box-sizing: border-box;
+                        flex-grow: 0;
+                        width: math.div($i * 100%, $grid-columns);
+                    }
+                }
+            
+            }
+
+Tutorial #17 : Maing a Grid System (part 2)
+
+    - Here, we are using justify content to align our content accordingly 
+    - first we used list which is just list of items 
+    - then we cycled through it and created our own classes 
+
+    _grid.scss 
+
+        $layout-values: flex-start, flex-end, center, space-between, space-around;
+
+        @each $val in $layout-values {
+
+            .justify-#{$val}{
+
+                justify-content: #{$val};
+            }
+
+        }
+
+Tutorial #18 : Using @extend 
+
+        - allows to extend or inherit a css property from another place
+
+         _navbar.scss 
+
+            %flex-layout{ // it was . normally, but we changed it to % so that it wouldn't take space in the index.css file
+
+                width: 100%;
+                display:flex;
+                align-items: center;
+                justify-content: space-between;
+                box-sizing: border-box;
+            }
+
+            .navbar {
+
+                @extend %flex-layout;
+                padding: $base-padding $base-padding * 2;
+                box-shadow: $base-box-shadow;
+
+                .site-title {
+
+                    font-size: $font-size-lg;
+                }
+
+                .container {
+
+                    @extend %flex-layout;
+                }
+            }
+
+            @each $key, $val in $colors {
+
+                .navbar-#{$key} {
+
+                    @extend .navbar;
+                    background-color: $val;
+                }
+            }
+
+Tutorial #19 : Using the CSS Library 
+
+        After creating our library, it is very easy to build a page from it 
+        check out homepage.html 
+
+Tutorial #20 : Purging CSS 
+
+    Purging refers to only loading the classes and entities we need in the css file 
+
+        - first we install a library of gulp called purge css
+            - npm install gulp-purgecss --save-dev 
+
+        - then we add it to our gulp file 2 places 
+
+        gulpfile.js
+
+            const {src, dest, watch, series} = require('gulp')
+            const sass = require('gulp-sass')(require('sass'));
+            const purgecss = require('gulp-purgecss');
+
+            //compiles scss to css
+            function buildStyles() {
+
+                return src('OrganizedProject/**/*.scss') 
+                .pipe(sass())
+                .pipe(purgecss({content: ['*.html']})) // means look any file that needs css 
+                .pipe(dest('css'))
+            }
+
+            //watches any changes and converts
+            function watchTask() {
+
+                // we added new files we want to look at 
+                watch(['OrganizedProject/**/*.scss', '*.html'], buildStyles)
+            }
+
+            exports.default = series(buildStyles, watchTask);
+
+Tutorial #21 - Customizing the Library 
+
+        - so what we do here is create our own file and make the gulpfile watch it. 
+        - then in our file we just import the sass folder 
+        - then we make changes before the import 
+        - don't forget the !default flag on every variable that you want to change  
+
+Tutorial #22 - Extending the Library Yourself 
+
+        - you can add or remove classes 
+        - mixins...etc 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        

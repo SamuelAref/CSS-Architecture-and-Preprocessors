@@ -1,0 +1,47 @@
+
+Post css - is all about plugins 
+What we did 
+
+    - npm init -y
+    - npm install --save-dev postcss postcss-cli // installs post css
+    - npm i -D postcss postcss-cli // installs post css same as above but shorter 
+    - npm install --save-dev postcss-import 
+    - npm  i -D postcss-import
+    - to use this import we created a new file postcss.config.js
+
+        //we list out the plugins we want to use 
+
+        postcss.config.js file 
+
+            module.exports = {
+
+                plugins : [
+
+                    require('postcss-import'),
+                ]
+            }
+
+    - then we imported all the css files into one new file using @import 'filepath'
+    - then we need to watch it by the npm script so we deleted the "test" line and added this :
+        "postcss:watch" : "postcss style.css --dir public --watch" // this means create a new public directory and a file named style.css then watch the folder for change  
+
+    - then we ran npm run postcss:watch in our terminal 
+    - ctrl + c to exit the watch 
+    - npm i -D cssnano postcss-preset-env // we installed 2 plugins cssnano and postcss-preset
+        //nano helps to minify the code or make it shorter 
+        // preset - allows us to use the future css today!
+
+    - then we require them in our postcss.config.js file 
+
+        postcss.config.js 
+
+            module.exports = {
+
+                plugins : [
+
+                    require('postcss-import'),
+                    require('postcss-preset-env')({stage: 1}),  //we added ({stage: 1}) meaning there is a new feature that allows nesting in css just like sass so this makes nesting with & work 
+                    require('cssnano'),
+
+                ]
+            }

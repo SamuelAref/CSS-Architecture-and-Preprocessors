@@ -1,0 +1,98 @@
+
+Installing Less 
+
+    npm install  -g less 
+
+    // install less watch for watching the less file 
+
+    npm install -g less-watch-compiler 
+
+create a less file 
+
+        styles.less 
+
+            body{
+
+                background:red;
+            }
+
+        // even if we include this file in our html, it won't show 
+           since it is not  a css file, so we need to compile it down 
+           with what we installed 
+
+Compiling less file 
+
+    lessc styles.less  // this will just return the compiled text 
+    less styles.less styles.css // this will compile it to a new file styles.css 
+
+Declaring variable 
+
+        @background-color : #red ; // this is a variable 
+
+Watching Less
+
+        less-watch-compiler less css  // this means watch the less folder for any change and compile it into the css folder css file 
+
+        to avoid always writing the directories, we created a new file less-watch-compiler.config.json  and posted our rules there 
+
+            less-watch-compiler.config.json
+
+                {
+
+                    "allowedExtensions": [".less"],
+                    "minified": false,
+                    "sourceMap": false,
+                    "watchFolder": "less",
+                    "outputFolder": "css"
+                }
+
+            then we can run command without directories like less-watch-compiler
+
+Properties of less 
+
+        variables - @variableName : value;
+        extends - .classOne:extend(.classTwo){
+
+                        properties here
+                    }
+        mixins - .mixin-borderRadius(@radius){
+
+                        border-radius: @radius;
+                    } // so we can use this mixin anywhere 
+        Nesting - li{
+
+                        padding:10px 0;
+
+                        a{
+
+                            color: red;
+                            &:hover {
+
+                                color: black;  
+                            }
+                        }
+
+                    
+                    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

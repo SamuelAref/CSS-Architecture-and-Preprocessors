@@ -1,0 +1,8 @@
+BEM ( Block Element Modifier ) - can checkout bem.info/methodology/ for more info 
+
+    Block - A standalone entity that is meaningful on it's own 
+    Element - A part of a block that has no standalone meaning and 
+              is semantically tied to it's block
+
+    Modifier - A flag on a glock or element. Use them to change appearance or behavior  
+        

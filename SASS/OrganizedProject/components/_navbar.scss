@@ -1,0 +1,35 @@
+%flex-layout{ // it was . normally, but we changed it to % so that it wouldn't take space in the index.css file 
+
+    width: 100%;
+    display:flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+}
+
+.navbar {
+
+    @extend %flex-layout;
+    padding: $base-padding $base-padding * 2;
+    box-shadow: $base-box-shadow;
+
+    .site-title {
+
+        font-size: $font-size-lg;
+    }
+
+    .container {
+
+        @extend %flex-layout;
+    }
+}
+
+
+@each $key, $val in $colors {
+
+    .navbar-#{$key} {
+
+        @extend .navbar;
+        background-color: $val;
+    }
+}
